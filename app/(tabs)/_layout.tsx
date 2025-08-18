@@ -1,3 +1,4 @@
+// /Users/keremgokhan/dev/repos/lahmacun-tracker2/app/(tabs)/_layout.tsx
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
@@ -20,7 +21,6 @@ export default function TabLayout() {
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
-            // Use a transparent background on iOS to show the blur effect
             position: 'absolute',
           },
           default: {},
@@ -34,10 +34,19 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="milestones"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Milestones',
+          // Correctly adding the tabBarIcon using IconSymbol
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="flag.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="quotes"
+        options={{
+          title: 'Quotes',
+          // Correctly adding the tabBarIcon using IconSymbol
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="quote.bubble.fill" color={color} />,
         }}
       />
     </Tabs>

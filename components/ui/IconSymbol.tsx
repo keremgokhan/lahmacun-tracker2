@@ -18,6 +18,8 @@ const MAPPING = {
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'flag.fill': 'flag', // Added for Milestones
+  'quote.bubble.fill': 'format-quote', // Added for Quotes
 } as IconMapping;
 
 /**
