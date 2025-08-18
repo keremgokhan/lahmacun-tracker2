@@ -1,4 +1,3 @@
-// /Users/keremgokhan/dev/repos/lahmacun-tracker2/components/CustomDateTimePicker.tsx
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Platform, StyleSheet } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';

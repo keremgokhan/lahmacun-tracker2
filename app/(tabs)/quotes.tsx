@@ -1,4 +1,3 @@
-// /Users/keremgokhan/dev/repos/lahmacun-tracker2/app/(tabs)/quotes.tsx
 import React from 'react';
 import { StyleSheet, View, Platform, StatusBar } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';

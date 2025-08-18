@@ -1,4 +1,3 @@
-// /Users/keremgokhan/dev/repos/lahmacun-tracker2/app/(tabs)/_layout.tsx
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';

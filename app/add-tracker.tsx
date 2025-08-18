@@ -1,4 +1,3 @@
-// /Users/keremgokhan/dev/repos/lahmacun-tracker2/app/add-tracker.tsx
 import React, { useState, useLayoutEffect } from 'react';
 import { View, TextInput, StyleSheet, ScrollView, TouchableOpacity, Platform, StatusBar, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';

@@ -1,4 +1,3 @@
-// /Users/keremgokhan/dev/repos/lahmacun-tracker2/app/(tabs)/index.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   StyleSheet,

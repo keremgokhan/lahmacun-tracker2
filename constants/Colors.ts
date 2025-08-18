@@ -1,4 +1,3 @@
-// /Users/keremgokhan/dev/repos/lahmacun-tracker2/constants/Colors.ts
 /**
  * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
  * This palette is designed with Nature Greens & Earthy Tones.
