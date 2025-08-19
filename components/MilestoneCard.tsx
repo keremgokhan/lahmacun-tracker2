@@ -25,7 +25,6 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
   const colorScheme = useColorScheme() ?? 'light';
   const styles = getStyles(colorScheme);
 
-  // Reverted icon for habits to 'spa'
   const iconName = milestone.trackerType === 'addiction' ? 'shield-alt' : 'spa';
 
   return (
@@ -54,9 +53,9 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     card: {
       backgroundColor: currentColors.cardBackground,
       borderRadius: 12,
-      padding: 18,
-      marginBottom: 18,
-      shadowColor: '#000000',
+      padding: 16,
+      marginBottom: 16,
+      shadowColor: currentColors.black,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: Platform.OS === 'ios' ? 0.15 : 0.25,
       shadowRadius: Platform.OS === 'ios' ? 4 : 5,
@@ -78,11 +77,11 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       color: currentColors.text,
     },
     celebratoryMessage: {
-      fontSize: 18, // Changed from 20
+      fontSize: 18,
       fontWeight: 'bold',
       color: currentColors.tint,
       marginBottom: 6,
-      lineHeight: 24, // Changed from 28
+      lineHeight: 24,
     },
     milestoneDetail: {
       fontSize: 14,
@@ -91,10 +90,10 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     },
     justForTodayBanner: {
       marginTop: 10,
-      backgroundColor: currentColors.primary,
+      backgroundColor: currentColors.tint,
       paddingVertical: 6,
       paddingHorizontal: 12,
-      borderRadius: 20,
+      borderRadius: 6,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
@@ -103,8 +102,8 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     justForTodayText: {
       fontSize: 13,
       fontWeight: 'bold',
-      // Ensure text contrasts with the primary banner color in both themes
-      color: colorScheme === 'light' ? Colors.light.text : Colors.dark.text,
+      color: currentColors.primaryButtonText,
     },
   });
 };
+

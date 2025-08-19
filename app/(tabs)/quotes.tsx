@@ -162,7 +162,7 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       borderRadius: 15,
       padding: 25,
       marginHorizontal: 10,
-      shadowColor: '#000000',
+      shadowColor: currentColors.black, // Changed from #000000
       shadowOffset: { width: 0, height: 3 },
       shadowOpacity: 0.2,
       shadowRadius: 5,

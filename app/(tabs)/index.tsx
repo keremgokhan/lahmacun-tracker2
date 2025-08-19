@@ -17,7 +17,7 @@ import { Link, useFocusEffect, router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Tracker } from '@/types/types';
-import { formatTimeSince, TimePart } from '../../utils/timeUtils'; // Added import
+import { TrackerCard } from '@/components/TrackerCard'; // Updated to use TrackerCard
 
 const TRACKERS_STORAGE_KEY = 'trackersList';
 const QUOTES_STORAGE_KEY = 'quotesList';
@@ -34,7 +34,7 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const [trackers, setTrackers] = useState<Tracker[]>([]);
   const [quote, setQuote] = useState<Quote | null>(null);
-  const [_, setForceUpdate] = useState(0);
+  const [_, setForceUpdate] = useState(0); // Kept for FlatList re-render on time change
 
   const loadTrackers = async () => {
     try {
@@ -73,8 +73,8 @@ export default function HomeScreen() {
   useEffect(() => {
     loadQuote();
     const intervalId = setInterval(() => {
-      setForceUpdate(prev => prev + 1);
-    }, 1000);
+      setForceUpdate(prev => prev + 1); // This ensures the timeSince updates are rendered
+    }, 1000); // Update every second
     return () => clearInterval(intervalId);
   }, []);
 
@@ -133,63 +133,14 @@ export default function HomeScreen() {
 
   const styles = getStyles(colorScheme);
 
-  const renderTrackerItem = ({ item }: { item: Tracker }) => {
-    // Old timeSince function is removed
-    const timeParts = formatTimeSince(item.startDate); // Use the new utility
-
-    const calculateDailyProgress = () => {
-      const now = new Date();
-      const startDate = new Date(item.startDate);
-      const diffMs = now.getTime() - startDate.getTime();
-      const msInADay = 24 * 60 * 60 * 1000;
-      if (diffMs < 0) return 0;
-      const progressInCurrentDayMs = diffMs % msInADay;
-      return (progressInCurrentDayMs / msInADay) * 100;
-    };
-
-    const dailyProgress = calculateDailyProgress();
-
-    return (
-      <View style={styles.trackerItem}>
-        <TouchableOpacity
-          style={styles.trackerDetails}
-          onPress={() => router.push({ pathname: "/edit-tracker", params: { trackerId: item.id } })}
-        >
-          <ThemedText style={styles.trackerName}>{item.name}</ThemedText>
-          <ThemedText style={styles.trackerType}>{item.type.charAt(0).toUpperCase() + item.type.slice(1)}</ThemedText>
-
-          <View style={styles.timeBadgesContainer}>
-            {/* Map over timeParts to render badges */}
-            {timeParts.map((part: TimePart) => (
-              <View key={part.key} style={styles.timeBadge}>
-                <ThemedText style={styles.timeBadgeText}>{part.text}</ThemedText>
-              </View>
-            ))}
-          </View>
-
-          <ThemedText style={styles.trackerStartDate}>
-            Started: {new Date(item.startDate).toLocaleDateString()}
-          </ThemedText>
-
-          <View style={styles.progressContainer}>
-            <ThemedText style={styles.progressLabel}>Today's Progress:</ThemedText>
-            <View style={styles.progressBarTrack}>
-              <View style={[styles.progressBarFill, { width: `${dailyProgress}%` }]} />
-            </View>
-          </View>
-        </TouchableOpacity>
-
-        <View style={styles.actionButtonsContainer}>
-          <TouchableOpacity onPress={() => handleResetTracker(item.id)} style={styles.actionButton}>
-            <FontAwesome5 name="sync-alt" size={18} color={Colors[colorScheme].text} />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => handleDeleteTracker(item.id)} style={styles.actionButton}>
-            <FontAwesome5 name="trash-alt" size={18} color={Colors[colorScheme].text} />
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  };
+  const renderTrackerItem = ({ item }: { item: Tracker }) => (
+    <TrackerCard
+      item={item}
+      colorScheme={colorScheme}
+      onResetTracker={handleResetTracker}
+      onDeleteTracker={handleDeleteTracker}
+    />
+  );
 
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
@@ -215,7 +166,7 @@ export default function HomeScreen() {
             renderItem={renderTrackerItem}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContentContainer}
-            extraData={_} // To ensure re-render when forceUpdate changes
+            extraData={_} // Ensures re-render when forceUpdate changes
           />
         )}
 
@@ -242,25 +193,18 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     },
     container: {
       flex: 1,
+      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
       backgroundColor: 'transparent'
     },
-    titleContainer: {
-      paddingHorizontal: 20,
-      marginBottom: 15,
-      backgroundColor: 'transparent',
-    },
-    title: {
-      textAlign: 'center',
-      color: currentColors.text,
-    },
+    // titleContainer and title styles were removed as they are no longer used here
     quoteContainer: {
       paddingHorizontal: 25,
       paddingVertical: 15,
       marginHorizontal: 20,
       marginBottom: 20,
-      backgroundColor: currentColors.cardBackground + 'cc',
+      backgroundColor: currentColors.cardBackground + 'cc', // 'cc' for some transparency
       borderRadius: 10,
-      shadowColor: '#000',
+      shadowColor: currentColors.black,
       shadowOffset: { width: 0, height: 1 },
       shadowOpacity: 0.1,
       shadowRadius: 2,
@@ -279,94 +223,9 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       color: currentColors.text,
     },
     listContentContainer: {
-      paddingHorizontal: 15,
-      paddingTop: 15,
-      paddingBottom: Platform.OS === 'ios' ? 100 : 90,
-    },
-    trackerItem: {
-      backgroundColor: currentColors.cardBackground,
-      borderRadius: 12,
-      padding: 18,
-      marginBottom: 15,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.15,
-      shadowRadius: 4,
-      elevation: 4,
-    },
-    trackerDetails: { 
-      flex: 1,
-      backgroundColor: 'transparent',
-      marginRight: 8,
-    },
-    trackerName: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: currentColors.text,
-      marginBottom: 5,
-    },
-    trackerType: {
-        fontSize: 13,
-        color: currentColors.tint,
-        marginBottom: 8,
-        fontWeight: '600',
-    },
-    timeBadgesContainer: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      marginBottom: 3,
-      marginTop: 2,
-    },
-    timeBadge: {
-      backgroundColor: currentColors.tint,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 6,
-      marginRight: 5,
-      marginBottom: 5,
-    },
-    timeBadgeText: {
-      color: currentColors.primaryButtonText,
-      fontSize: 14,
-      fontWeight: '600',
-    },
-    trackerStartDate: {
-        fontSize: 13,
-        color: currentColors.gray,
-        marginBottom: 4,
-    },
-    progressContainer: {
-        marginTop: 4,
-        marginBottom: 5,
-    },
-    progressLabel: {
-        fontSize: 12,
-        color: currentColors.gray,
-        marginBottom: 3,
-    },
-    progressBarTrack: {
-        height: 8,
-        backgroundColor: currentColors.separator,
-        borderRadius: 4,
-        overflow: 'hidden',
-    },
-    progressBarFill: {
-        height: '100%',
-        backgroundColor: currentColors.tint,
-        borderRadius: 4,
-    },
-    actionButtonsContainer: {
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      backgroundColor: 'transparent',
-    },
-    actionButton: {
-      paddingVertical: 6,
-      paddingHorizontal: 8,
+      paddingHorizontal: 16, // MODIFIED from 15
+      paddingTop: 15, // paddingTop can remain if it looks good
+      paddingBottom: Platform.OS === 'ios' ? 100 : 90, // Kept as is, specific to this screen's FAB
     },
     emptyContainer: {
       flex: 1,
@@ -388,9 +247,9 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       right: 0,
       paddingVertical: Platform.OS === 'ios' ? 20 : 15,
       paddingHorizontal: 20,
-      backgroundColor: 'transparent',
-      borderTopWidth: Platform.OS === 'android' ? 1 : 0,
-      borderTopColor: Platform.OS === 'android' ? currentColors.separator + '40' : 'transparent',
+      backgroundColor: 'transparent', // Or a very subtle color if needed over complex backgrounds
+      borderTopWidth: Platform.OS === 'android' ? 1 : 0, // Conditional border
+      borderTopColor: Platform.OS === 'android' ? currentColors.separator + '40' : 'transparent', // translucent separator
     },
     addButton: {
       backgroundColor: currentColors.tint,
@@ -399,16 +258,16 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      shadowColor: '#000',
+      shadowColor: currentColors.black,
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 3,
-      elevation: 3,
+      shadowOpacity: 0.2, // Kept as is for FAB prominence
+      shadowRadius: 3,   // Kept as is
+      elevation: 3,      // Kept as is
     },
     addButtonText: {
       color: currentColors.primaryButtonText,
-      fontSize: 17,
-      fontWeight: '600',
+      fontSize: 17,    // Kept as is (subjective choice)
+      fontWeight: '600', // Kept as is
     },
   });
 };

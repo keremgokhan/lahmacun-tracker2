@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   Platform,
   StatusBar,
-  ImageBackground, // Added
+  ImageBackground,
 } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -15,11 +15,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Tracker } from '@/types/types';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { MilestoneCard } from '@/components/MilestoneCard'; // Import the card
+import { MilestoneCard } from '@/components/MilestoneCard';
 
 const TRACKERS_STORAGE_KEY = 'trackersList';
 
-// Added background image
 const backgroundImage = require('../../assets/images/nature_green_background.png');
 
 interface DisplayMilestone {
@@ -136,7 +135,7 @@ export default function MilestonesScreen() {
     return (
       <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
         <ThemedView style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={Colors[colorScheme].tint} />
+          <ActivityIndicator size="large" color={Colors[colorScheme].tint}/>
           <ThemedText style={{marginTop: 10, color: Colors[colorScheme].text}}>Loading milestones...</ThemedText>
         </ThemedView>
       </ImageBackground>
@@ -146,7 +145,6 @@ export default function MilestonesScreen() {
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
       <ThemedView style={styles.container}>
-        {/* <ThemedText type="title" style={styles.title}>Your Milestones</ThemedText> REMOVED */}
         {displayMilestones.length === 0 ? (
           <ThemedView style={styles.emptyTextContainer}>
             <ThemedText style={styles.emptyText}>No milestones achieved yet. Keep up your great work with your trackers, and you'll see them here!
@@ -158,7 +156,6 @@ export default function MilestonesScreen() {
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => <MilestoneCard milestone={item} />}
             contentContainerStyle={styles.listContentContainer}
-            ListFooterComponent={<View style={{height:30}}/>}
           />
         )}
       </ThemedView>
@@ -176,38 +173,36 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     },
     container: {
       flex: 1,
-      backgroundColor: 'transparent', // Make container transparent
+      backgroundColor: 'transparent',
     },
     centerContainer: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 20,
-      backgroundColor: 'transparent', // Make transparent
+      backgroundColor: 'transparent',
     },
     title: {
-     // fontSize: 26, // Handled by ThemedText type="title"
-     // fontWeight: 'bold', // Handled by ThemedText type="title"
       textAlign: 'center',
       marginBottom: 20,
-      color: currentColors.text, // Ensure title text is visible on background
-      backgroundColor: 'transparent', // Ensure no blocky background for title
+      color: currentColors.text,
+      backgroundColor: 'transparent',
     },
     listContentContainer: {
       paddingTop: 15,
-      paddingHorizontal: 15,
-      // paddingBottom: 20, // ListFooterComponent used instead for bottom spacing
+      paddingHorizontal: 16,
+      paddingBottom: 80,
     },
     emptyTextContainer: {
-        flex:1, 
-        justifyContent:'center', 
-        alignItems:'center', 
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center',
         backgroundColor:'transparent'
     },
     emptyText: {
       fontSize: 16,
       textAlign: 'center',
-      color: currentColors.text, // Ensure empty text is visible
+      color: currentColors.text,
       marginTop: 10,
       paddingHorizontal: 20,
     },

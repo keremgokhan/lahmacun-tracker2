@@ -15,6 +15,8 @@ const lightCardBackground = '#E9E6D9'; // Slightly darker beige than screen back
 const lightDanger = '#C04000'; // Maroon/Muted Red (for delete actions)
 const lightWarning = '#DAA520'; // Goldenrod/Muted Yellow-Orange (for reset actions)
 const lightGray = '#A9A9A9'; // A generic gray
+const lightBlack = '#000000';
+const lightLinkColor = '#0a7ea4'; // Added
 
 // Dark Theme Colors
 const darkText = '#E0E0D1'; // Light Beige/Off-white (for primary text)
@@ -28,6 +30,8 @@ const darkCardBackground = '#3C4436'; // Dark Green-Gray, slightly lighter than 
 const darkDanger = '#E57373'; // Soft Red (for delete actions)
 const darkWarning = '#FFB74D'; // Soft Orange (for reset actions)
 const darkGray = '#555555'; // A generic dark gray
+const darkBlack = '#000000';
+const darkLinkColor = '#69b8db'; // Added (example for dark theme)
 
 export const Colors = {
   light: {
@@ -43,6 +47,8 @@ export const Colors = {
     danger: lightDanger,
     warning: lightWarning,
     gray: lightGray,
+    black: lightBlack,
+    linkColor: lightLinkColor, // Added
   },
   dark: {
     text: darkText,
@@ -57,6 +63,7 @@ export const Colors = {
     danger: darkDanger,
     warning: darkWarning,
     gray: darkGray,
+    black: darkBlack,
+    linkColor: darkLinkColor, // Added
   },
 };
-
