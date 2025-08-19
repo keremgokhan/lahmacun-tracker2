@@ -158,7 +158,7 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       backgroundColor: 'transparent',
     },
     quoteCard: {
-      backgroundColor: currentColors.cardBackground + 'E6',
+      backgroundColor: currentColors.cardBackground,
       borderRadius: 15,
       padding: 25,
       marginHorizontal: 10,

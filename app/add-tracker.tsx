@@ -90,8 +90,8 @@ export default function AddTrackerScreen() {
         {/* Use the CustomDateTimePicker component */}
         <CustomDateTimePicker
           currentDate={currentStartDate}
-          onDateChange={setCurrentStartDate} // Pass the state setter function
-          label="Start Date & Time:" // This is the default, but you can customize
+          onDateChange={setCurrentStartDate}
+          label="Start Date & Time:"
         />
 
         <TouchableOpacity style={styles.button} onPress={handleAddTracker}>
