@@ -205,14 +205,13 @@ export default function HomeScreen() {
             totalSeconds %= SECONDS_PER_MINUTE;
         }
 
-        const seconds = totalSeconds;
-        if (seconds > 0 || badges.length === 0) {
-            badges.push(
-                <View key="s" style={styles.timeBadge}>
-                    <ThemedText style={styles.timeBadgeText}>{`${seconds} second${seconds !== 1 ? 's' : ''}`}</ThemedText>
-                </View>
-            );
-        }
+        const seconds = totalSeconds; // This is the remainder
+        // Always show the seconds badge if we've passed the "Just started" phase
+        badges.push(
+            <View key="s" style={styles.timeBadge}>
+                <ThemedText style={styles.timeBadgeText}>{`${seconds} second${seconds !== 1 ? 's' : ''}`}</ThemedText>
+            </View>
+        );
 
         return badges;
     };
@@ -271,9 +270,7 @@ export default function HomeScreen() {
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
       <ThemedView style={styles.container}>
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText type="title" style={styles.title}>Lahmacun Tracker</ThemedText>
-        </ThemedView>
+        {/* ThemedView with title was here and is now removed */}
 
         {quote && (
           <ThemedView style={styles.quoteContainer}>
@@ -323,8 +320,7 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     },
     container: {
       flex: 1,
-      backgroundColor: 'transparent',
-      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 20 : 70,
+      backgroundColor: 'transparent'
     },
     titleContainer: {
       paddingHorizontal: 20,
@@ -362,6 +358,7 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     },
     listContentContainer: {
       paddingHorizontal: 15,
+      paddingTop: 15,
       paddingBottom: Platform.OS === 'ios' ? 100 : 90,
     },
     trackerItem: {
@@ -493,4 +490,3 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     },
   });
 };
-

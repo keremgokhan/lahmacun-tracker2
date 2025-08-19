@@ -15,7 +15,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
+        headerShown: true,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
@@ -28,7 +28,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'Lahmacun Tracker', // MODIFIED
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />
@@ -36,15 +36,13 @@ export default function TabLayout() {
         name="milestones"
         options={{
           title: 'Milestones',
-          // Correctly adding the tabBarIcon using IconSymbol
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="flag.fill" color={color} />,
         }}
       />
       <Tabs.Screen
         name="quotes"
         options={{
-          title: 'Quotes',
-          // Correctly adding the tabBarIcon using IconSymbol
+          title: 'Daily Wisdom', // MODIFIED
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="quote.bubble.fill" color={color} />,
         }}
       />

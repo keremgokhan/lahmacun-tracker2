@@ -146,7 +146,7 @@ export default function MilestonesScreen() {
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
       <ThemedView style={styles.container}>
-        <ThemedText type="title" style={styles.title}>Your Milestones</ThemedText>
+        {/* <ThemedText type="title" style={styles.title}>Your Milestones</ThemedText> REMOVED */}
         {displayMilestones.length === 0 ? (
           <ThemedView style={styles.emptyTextContainer}>
             <ThemedText style={styles.emptyText}>No milestones achieved yet. Keep up your great work with your trackers, and you'll see them here!
@@ -158,8 +158,7 @@ export default function MilestonesScreen() {
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => <MilestoneCard milestone={item} />}
             contentContainerStyle={styles.listContentContainer}
-            ListHeaderComponent={<View style={{height:10}}/>} // Small space at the top of list
-            ListFooterComponent={<View style={{height:30}}/>} // Space at bottom
+            ListFooterComponent={<View style={{height:30}}/>}
           />
         )}
       </ThemedView>
@@ -178,7 +177,6 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     container: {
       flex: 1,
       backgroundColor: 'transparent', // Make container transparent
-      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 20 : 50,
     },
     centerContainer: {
       flex: 1,
@@ -196,6 +194,7 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       backgroundColor: 'transparent', // Ensure no blocky background for title
     },
     listContentContainer: {
+      paddingTop: 15,
       paddingHorizontal: 15,
       // paddingBottom: 20, // ListFooterComponent used instead for bottom spacing
     },
