@@ -17,6 +17,7 @@ import { Link, useFocusEffect, router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Tracker } from '@/types/types';
+import { formatTimeSince, TimePart } from '../../utils/timeUtils'; // Added import
 
 const TRACKERS_STORAGE_KEY = 'trackersList';
 const QUOTES_STORAGE_KEY = 'quotesList';
@@ -133,88 +134,8 @@ export default function HomeScreen() {
   const styles = getStyles(colorScheme);
 
   const renderTrackerItem = ({ item }: { item: Tracker }) => {
-    const timeSince = (): React.ReactNode[] => {
-        const now = new Date();
-        const startDate = new Date(item.startDate);
-        const diffMs = now.getTime() - startDate.getTime();
-
-        if (diffMs < 1000) {
-            return [
-                <View key="just-started-badge" style={styles.timeBadge}>
-                    <ThemedText style={styles.timeBadgeText}>Just started</ThemedText>
-                </View>
-            ];
-        }
-
-        let totalSeconds = Math.floor(diffMs / 1000);
-        const badges: React.ReactNode[] = [];
-
-        const SECONDS_PER_MINUTE = 60;
-        const SECONDS_PER_HOUR = SECONDS_PER_MINUTE * 60;
-        const SECONDS_PER_DAY = SECONDS_PER_HOUR * 24;
-        const APPROX_SECONDS_PER_MONTH = SECONDS_PER_DAY * 30;
-        const APPROX_SECONDS_PER_YEAR = SECONDS_PER_DAY * 365;
-
-        const years = Math.floor(totalSeconds / APPROX_SECONDS_PER_YEAR);
-        if (years > 0) {
-            badges.push(
-                <View key="y" style={styles.timeBadge}>
-                    <ThemedText style={styles.timeBadgeText}>{`${years} year${years !== 1 ? 's' : ''}`}</ThemedText>
-                </View>
-            );
-            totalSeconds %= APPROX_SECONDS_PER_YEAR;
-        }
-
-        const months = Math.floor(totalSeconds / APPROX_SECONDS_PER_MONTH);
-        if (months > 0) {
-            badges.push(
-                <View key="mo" style={styles.timeBadge}>
-                    <ThemedText style={styles.timeBadgeText}>{`${months} month${months !== 1 ? 's' : ''}`}</ThemedText>
-                </View>
-            );
-            totalSeconds %= APPROX_SECONDS_PER_MONTH;
-        }
-
-        const days = Math.floor(totalSeconds / SECONDS_PER_DAY);
-        if (days > 0) {
-            badges.push(
-                <View key="d" style={styles.timeBadge}>
-                    <ThemedText style={styles.timeBadgeText}>{`${days} day${days !== 1 ? 's' : ''}`}</ThemedText>
-                </View>
-            );
-            totalSeconds %= SECONDS_PER_DAY;
-        }
-
-        const hours = Math.floor(totalSeconds / SECONDS_PER_HOUR);
-        if (hours > 0) {
-            badges.push(
-                <View key="h" style={styles.timeBadge}>
-                    <ThemedText style={styles.timeBadgeText}>{`${hours} hour${hours !== 1 ? 's' : ''}`}</ThemedText>
-                </View>
-            );
-            totalSeconds %= SECONDS_PER_HOUR;
-        }
-
-        const minutes = Math.floor(totalSeconds / SECONDS_PER_MINUTE);
-        if (minutes > 0) {
-            badges.push(
-                <View key="m" style={styles.timeBadge}>
-                    <ThemedText style={styles.timeBadgeText}>{`${minutes} minute${minutes !== 1 ? 's' : ''}`}</ThemedText>
-                </View>
-            );
-            totalSeconds %= SECONDS_PER_MINUTE;
-        }
-
-        const seconds = totalSeconds; // This is the remainder
-        // Always show the seconds badge if we've passed the "Just started" phase
-        badges.push(
-            <View key="s" style={styles.timeBadge}>
-                <ThemedText style={styles.timeBadgeText}>{`${seconds} second${seconds !== 1 ? 's' : ''}`}</ThemedText>
-            </View>
-        );
-
-        return badges;
-    };
+    // Old timeSince function is removed
+    const timeParts = formatTimeSince(item.startDate); // Use the new utility
 
     const calculateDailyProgress = () => {
       const now = new Date();
@@ -230,7 +151,6 @@ export default function HomeScreen() {
 
     return (
       <View style={styles.trackerItem}>
-        {/* This TouchableOpacity now wraps all the main display content */}
         <TouchableOpacity
           style={styles.trackerDetails}
           onPress={() => router.push({ pathname: "/edit-tracker", params: { trackerId: item.id } })}
@@ -239,7 +159,12 @@ export default function HomeScreen() {
           <ThemedText style={styles.trackerType}>{item.type.charAt(0).toUpperCase() + item.type.slice(1)}</ThemedText>
 
           <View style={styles.timeBadgesContainer}>
-            {timeSince()}
+            {/* Map over timeParts to render badges */}
+            {timeParts.map((part: TimePart) => (
+              <View key={part.key} style={styles.timeBadge}>
+                <ThemedText style={styles.timeBadgeText}>{part.text}</ThemedText>
+              </View>
+            ))}
           </View>
 
           <ThemedText style={styles.trackerStartDate}>
@@ -254,7 +179,6 @@ export default function HomeScreen() {
           </View>
         </TouchableOpacity>
 
-        {/* Action buttons remain separate */}
         <View style={styles.actionButtonsContainer}>
           <TouchableOpacity onPress={() => handleResetTracker(item.id)} style={styles.actionButton}>
             <FontAwesome5 name="sync-alt" size={18} color={Colors[colorScheme].text} />
@@ -270,8 +194,6 @@ export default function HomeScreen() {
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
       <ThemedView style={styles.container}>
-        {/* ThemedView with title was here and is now removed */}
-
         {quote && (
           <ThemedView style={styles.quoteContainer}>
             <ThemedText style={styles.quoteText}>"{quote.text}"</ThemedText>
@@ -293,7 +215,7 @@ export default function HomeScreen() {
             renderItem={renderTrackerItem}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContentContainer}
-            extraData={_}
+            extraData={_} // To ensure re-render when forceUpdate changes
           />
         )}
 
@@ -375,9 +297,9 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       shadowRadius: 4,
       elevation: 4,
     },
-    trackerDetails: { // This style is now applied to the TouchableOpacity
+    trackerDetails: { 
       flex: 1,
-      backgroundColor: 'transparent', // Ensure it doesn't obscure underlying card bg
+      backgroundColor: 'transparent',
       marginRight: 8,
     },
     trackerName: {
