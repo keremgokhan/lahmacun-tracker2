@@ -94,11 +94,8 @@ Lahmacun Tracker is a mobile application built with Expo and React Native, desig
     *   `ThemedText.tsx`, `ThemedView.tsx`: Basic themed UI elements.
     *   `TrackerCard.tsx`: Component for displaying individual trackers.
     *   `MilestoneCard.tsx`: Component for displaying achieved milestones.
-    *   `TabBarIcon.tsx` (If you have a custom one, or `(tabs)/_layout.tsx` handles icons directly).
-    *   *(You may have removed `HelloWave.tsx`, `ExternalLink.tsx` - adjust this list as needed)*
 *   `constants/`: Global constants.
     *   `Colors.ts`: Defines the light and dark mode color palettes.
-    *   `MilestoneDefs.ts` (Or similar, if you've centralized milestone logic/data).
 *   `hooks/`: Custom React hooks.
     *   `useColorScheme.ts`: Hook to get the current color scheme.
 *   `types/`: TypeScript type definitions for the application (`types.ts`).
