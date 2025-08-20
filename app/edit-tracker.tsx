@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { View, TextInput, StyleSheet, Alert, ScrollView, TouchableOpacity, Platform, StatusBar } from 'react-native';
+import { View, TextInput, StyleSheet, Alert, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useNavigation, useLocalSearchParams, router } from 'expo-router';
@@ -7,7 +7,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Tracker } from '../types/types';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-// Import the new CustomDateTimePicker
 import { CustomDateTimePicker } from '@/components/CustomDateTimePicker';
 
 const TRACKERS_STORAGE_KEY = 'trackersList';
@@ -17,6 +16,8 @@ export default function EditTrackerScreen() {
   const navigation = useNavigation();
   const { trackerId } = useLocalSearchParams<{ trackerId: string }>();
   const colorScheme = useColorScheme() ?? 'light';
+  const cardBackgroundColor = Colors[colorScheme].cardBackground;
+  const textColor = Colors[colorScheme].text;
 
   const [tracker, setTracker] = useState<Tracker | null>(null);
   const [name, setName] = useState('');
@@ -28,11 +29,11 @@ export default function EditTrackerScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: name ? `Edit: ${name}` : (tracker ? `Edit: ${tracker.name}`: 'Edit Tracker'),
-      headerStyle: { backgroundColor: Colors[colorScheme].background },
-      headerTintColor: Colors[colorScheme].text,
+      headerStyle: { backgroundColor: cardBackgroundColor },
+      headerTintColor: textColor,
       headerTitleStyle: { fontWeight: 'bold' },
     });
-  }, [navigation, name, tracker, colorScheme]);
+  }, [navigation, name, tracker, colorScheme, cardBackgroundColor, textColor]);
 
   useEffect(() => {
     const loadTracker = async () => {
@@ -89,7 +90,7 @@ export default function EditTrackerScreen() {
     }
   };
 
-  const styles = getStyles(colorScheme);
+  const styles = getStyles(colorScheme, cardBackgroundColor);
 
   if (!tracker) {
     return (
@@ -112,7 +113,7 @@ export default function EditTrackerScreen() {
         />
 
         <ThemedText style={styles.label}>Tracker Type:</ThemedText>
-        <View style={styles.segmentedControlContainer}>
+        <ThemedView style={styles.segmentedControlContainer}>
           {availableTrackerTypes.map((trackerType) => (
              <TouchableOpacity
              key={trackerType}
@@ -127,7 +128,7 @@ export default function EditTrackerScreen() {
              </ThemedText>
            </TouchableOpacity>
           ))}
-        </View>
+        </ThemedView>
 
         {/* Use the CustomDateTimePicker component */}
         <CustomDateTimePicker
@@ -144,11 +145,13 @@ export default function EditTrackerScreen() {
   );
 }
 
-const getStyles = (colorScheme: 'light' | 'dark') => {
+// Pass cardBackgroundColor to styles function
+const getStyles = (colorScheme: 'light' | 'dark', cardBgColor: string) => {
   const currentColors = Colors[colorScheme];
   return StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: cardBgColor,
     },
     scrollContent: {
       padding: 20,
@@ -175,7 +178,8 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       fontSize: 16,
       marginBottom: 20,
       color: currentColors.text,
-      backgroundColor: currentColors.cardBackground,
+      // Input background should contrast or match the screen, using card background for consistency here
+      backgroundColor: currentColors.cardBackground === cardBgColor ? currentColors.background : currentColors.cardBackground,
     },
     segmentedControlContainer: {
       flexDirection: 'row',
@@ -191,7 +195,8 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       flex: 1,
       paddingVertical: 10,
       alignItems: 'center',
-      backgroundColor: currentColors.background,
+      // Segment button background should contrast with screen; using general background
+      backgroundColor: currentColors.background, 
     },
     segmentButtonActive: {
       backgroundColor: currentColors.tint,
@@ -202,7 +207,6 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     segmentButtonTextActive: {
       color: currentColors.primaryButtonText,
     },
-    // Styles like dateDisplay, iosPickerDismissButton are no longer needed here
     button: {
       backgroundColor: currentColors.tint,
       paddingVertical: 12,

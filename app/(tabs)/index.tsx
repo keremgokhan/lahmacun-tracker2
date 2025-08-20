@@ -193,7 +193,6 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     },
     container: {
       flex: 1,
-      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
       backgroundColor: 'transparent'
     },
     // titleContainer and title styles were removed as they are no longer used here

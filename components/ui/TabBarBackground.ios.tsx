@@ -1,13 +1,18 @@
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
-import { BlurView } from 'expo-blur';
-import { StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { useColorScheme } from '@/hooks/useColorScheme';
+import { Colors } from '@/constants/Colors';
 
-export default function BlurTabBarBackground() {
+export default function SolidTabBarBackground() {
+  const colorScheme = useColorScheme() ?? 'light';
+  const cardBackgroundColor = Colors[colorScheme].cardBackground;
+
   return (
-    <BlurView
-      tint="systemChromeMaterial"
-      intensity={100}
-      style={StyleSheet.absoluteFill}
+    <View
+      style={[
+        StyleSheet.absoluteFill,
+        { backgroundColor: cardBackgroundColor },
+      ]}
     />
   );
 }

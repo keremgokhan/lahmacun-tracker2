@@ -1,5 +1,5 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { View, TextInput, StyleSheet, ScrollView, TouchableOpacity, Platform, StatusBar, Alert } from 'react-native';
+import { View, TextInput, StyleSheet, ScrollView, TouchableOpacity, Platform, Alert } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useNavigation, router } from 'expo-router';
@@ -7,7 +7,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Tracker } from '../types/types';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-// Import the new CustomDateTimePicker
 import { CustomDateTimePicker } from '@/components/CustomDateTimePicker';
 
 const TRACKERS_STORAGE_KEY = 'trackersList';
@@ -18,6 +17,8 @@ export default function AddTrackerScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const [name, setName] = useState('');
   const [type, setType] = useState<'addiction' | 'habit'>(availableTrackerTypes[0]);
+  const cardBackgroundColor = Colors[colorScheme].cardBackground;
+  const textColor = Colors[colorScheme].text;
 
   // Only this state is needed for the date now
   const [currentStartDate, setCurrentStartDate] = useState(new Date());
@@ -25,11 +26,11 @@ export default function AddTrackerScreen() {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: 'Add New Tracker',
-      headerStyle: { backgroundColor: Colors[colorScheme].background },
-      headerTintColor: Colors[colorScheme].text,
+      headerStyle: { backgroundColor: cardBackgroundColor },
+      headerTintColor: textColor,
       headerTitleStyle: { fontWeight: 'bold' },
     });
-  }, [navigation, colorScheme]);
+  }, [navigation, colorScheme, cardBackgroundColor, textColor]);
 
   const handleAddTracker = async () => {
     if (!name.trim()) {
@@ -55,7 +56,7 @@ export default function AddTrackerScreen() {
     }
   };
 
-  const styles = getStyles(colorScheme);
+  const styles = getStyles(colorScheme, cardBackgroundColor);
 
   return (
     <ThemedView style={styles.container}>
@@ -70,7 +71,7 @@ export default function AddTrackerScreen() {
         />
 
         <ThemedText style={styles.label}>Tracker Type:</ThemedText>
-        <View style={styles.segmentedControlContainer}>
+        <ThemedView style={styles.segmentedControlContainer}>
           {availableTrackerTypes.map((trackerType) => (
             <TouchableOpacity
               key={trackerType}
@@ -85,7 +86,7 @@ export default function AddTrackerScreen() {
               </ThemedText>
             </TouchableOpacity>
           ))}
-        </View>
+        </ThemedView>
 
         {/* Use the CustomDateTimePicker component */}
         <CustomDateTimePicker
@@ -102,7 +103,7 @@ export default function AddTrackerScreen() {
   );
 }
 
-const getStyles = (colorScheme: 'light' | 'dark') => {
+const getStyles = (colorScheme: 'light' | 'dark', cardBgColor: string) => {
   const currentColors = Colors[colorScheme];
   // Styles remain largely the same, but dateDisplay, iosPickerDismissButton styles can be removed
   // if they are only used by the picker logic now encapsulated in CustomDateTimePicker.
@@ -110,6 +111,7 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
   return StyleSheet.create({
     container: {
       flex: 1,
+      backgroundColor: cardBgColor
     },
     scrollContent: {
       padding: 20,

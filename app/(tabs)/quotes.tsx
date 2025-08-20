@@ -146,7 +146,6 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       alignItems: 'center',
       paddingHorizontal: 20,
       backgroundColor: 'transparent',
-      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 15,
     },
     centerContainer: {
       flex: 1,
