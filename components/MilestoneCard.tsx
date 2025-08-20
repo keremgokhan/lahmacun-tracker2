@@ -24,13 +24,14 @@ interface MilestoneCardProps {
 export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
   const colorScheme = useColorScheme() ?? 'light';
   const styles = getStyles(colorScheme);
+  const currentColors = Colors[colorScheme]; // Get current colors for direct use if needed
 
   const iconName = milestone.trackerType === 'addiction' ? 'shield-alt' : 'spa';
 
   return (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
-        <FontAwesome5 name={iconName} size={22} color={Colors[colorScheme].tint} style={styles.icon} />
+        <FontAwesome5 name={iconName} size={22} color={currentColors.tint} style={styles.icon} />
         <ThemedText style={styles.trackerName}>{milestone.trackerName}</ThemedText>
       </View>
       <ThemedText style={styles.celebratoryMessage}>{milestone.celebratoryMessage}</ThemedText>
@@ -39,7 +40,7 @@ export const MilestoneCard: React.FC<MilestoneCardProps> = ({ milestone }) => {
       </ThemedText>
       {milestone.isJustForToday ? (
         <View style={styles.justForTodayBanner}>
-          <FontAwesome5 name="star" size={14} color={styles.justForTodayText.color} style={{marginRight: 6}}/>
+          <FontAwesome5 name="star" size={14} color={currentColors.primaryButtonText} style={{marginRight: 6}}/>
           <ThemedText style={styles.justForTodayText}>JUST FOR TODAY!</ThemedText>
         </View>
       ) : null}
@@ -51,7 +52,7 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
   const currentColors = Colors[colorScheme];
   return StyleSheet.create({
     card: {
-      backgroundColor: currentColors.cardBackground,
+      backgroundColor: currentColors.cardBackground, // Will use new lighter color
       borderRadius: 12,
       padding: 16,
       marginBottom: 16,
@@ -74,25 +75,25 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     trackerName: {
       fontSize: 14,
       fontWeight: '600',
-      color: currentColors.text,
+      color: currentColors.text, // Uses your main text color
     },
     celebratoryMessage: {
-      fontSize: 18,
+      fontSize: 16, // Smaller for a more compact feel
       fontWeight: 'bold',
-      color: currentColors.tint,
+      color: currentColors.text, // Your darker, serene text green
       marginBottom: 6,
-      lineHeight: 24,
+      lineHeight: 22, // Adjusted line height for smaller font
     },
     milestoneDetail: {
-      fontSize: 14,
-      color: currentColors.text,
+      fontSize: 13, // Changed from 14 to 13 for consistency
+      color: currentColors.text, // Uses your main text color
       marginBottom: 3,
     },
     justForTodayBanner: {
       marginTop: 10,
-      backgroundColor: currentColors.tint,
-      paddingVertical: 6,
-      paddingHorizontal: 12,
+      backgroundColor: currentColors.tint, // Your serene green
+      paddingVertical: 3,   // More compact
+      paddingHorizontal: 6, // More compact
       borderRadius: 6,
       flexDirection: 'row',
       alignItems: 'center',
@@ -100,9 +101,9 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       alignSelf: 'flex-start',
     },
     justForTodayText: {
-      fontSize: 13,
+      fontSize: 12, // More compact
       fontWeight: 'bold',
-      color: currentColors.primaryButtonText,
+      color: currentColors.primaryButtonText, // Your original text color for banner
     },
   });
 };

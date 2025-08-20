@@ -18,7 +18,7 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
   const currentColors = Colors[colorScheme];
   return StyleSheet.create({
     card: {
-      backgroundColor: currentColors.cardBackground,
+      backgroundColor: currentColors.cardBackground, // Will use the new lighter color from Colors.ts
       borderRadius: 12,
       padding: 16,
       marginBottom: 16,
@@ -55,21 +55,21 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       marginTop: 2,
     },
     timeBadge: {
-      backgroundColor: currentColors.tint,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
+      backgroundColor: currentColors.tint, // Your original serene green
+      paddingHorizontal: 6, // More compact
+      paddingVertical: 3,   // More compact
       borderRadius: 6,
       marginRight: 5,
       marginBottom: 5,
     },
     timeBadgeText: {
-      color: currentColors.primaryButtonText,
-      fontSize: 14,
+      color: currentColors.primaryButtonText, // Your original text color for badges
+      fontSize: 12, // More compact
       fontWeight: '600',
     },
     trackerStartDate: {
       fontSize: 13,
-      color: currentColors.gray,
+      color: currentColors.text, // Darker for better contrast
       marginBottom: 4,
     },
     progressContainer: {
@@ -78,7 +78,7 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     },
     progressLabel: {
       fontSize: 12,
-      color: currentColors.gray,
+      color: currentColors.text, // Darker for better contrast
       marginBottom: 3,
     },
     progressBarTrack: {
@@ -161,3 +161,4 @@ export const TrackerCard: React.FC<TrackerCardProps> = ({
     </View>
   );
 };
+
