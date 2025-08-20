@@ -43,10 +43,10 @@ export default function QuotesScreen() {
   const styles = getStyles(colorScheme);
   const [isLoading, setIsLoading] = useState(true);
   const [dailyQuote, setDailyQuote] = useState<Quote | null>(null);
-  const currentColors = Colors[colorScheme]; // For direct color access
+  const currentColors = Colors[colorScheme];
 
   const getTodaysDateString = () => {
-    return new Date().toISOString().split('T')[0]; // Gets 'YYYY-MM-DD'
+    return new Date().toISOString().split('T')[0];
   };
 
   const loadOrRefreshQuote = useCallback(async (forceRefresh = false) => {
@@ -66,17 +66,15 @@ export default function QuotesScreen() {
           await AsyncStorage.setItem(QUOTE_STORAGE_KEY, JSON.stringify(newQuote));
           await AsyncStorage.setItem(QUOTE_DATE_STORAGE_KEY, currentDate);
         } else {
-          setDailyQuote(null); // Should not happen with a predefined list
+          setDailyQuote(null);
         }
       }
     } catch (error) {
       console.error("Failed to load or refresh quote:", error);
-      // Fallback to a random quote if storage fails during refresh
       if (forceRefresh && QUOTES_LIST.length > 0) {
         const randomIndex = Math.floor(Math.random() * QUOTES_LIST.length);
         setDailyQuote(QUOTES_LIST[randomIndex]);
       } else if (!forceRefresh) {
-        // If initial load fails, also try to set a random one
         const randomIndex = Math.floor(Math.random() * QUOTES_LIST.length);
         setDailyQuote(QUOTES_LIST[randomIndex]);
       }
@@ -106,7 +104,6 @@ export default function QuotesScreen() {
       <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
         <ThemedView style={styles.centerContainer}>
           <ThemedText style={styles.quoteText}>Could not load a quote.</ThemedText>
-          {/* "Try Again" Button for error state */}
           <TouchableOpacity onPress={() => loadOrRefreshQuote(true)} style={[styles.refreshButton, {marginTop: 25}]}>
             <FontAwesome5 name="sync-alt" size={16} color={currentColors.tint} style={styles.refreshIcon} />
             <ThemedText style={styles.refreshButtonText}>Try Again</ThemedText>
@@ -159,66 +156,67 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       backgroundColor: 'transparent',
     },
     quoteCard: {
-      backgroundColor: currentColors.cardBackground, 
+      backgroundColor: currentColors.cardBackground,
       borderRadius: 15,
-      padding: 25, 
-      marginHorizontal: 10, 
+      padding: 25,
+      marginHorizontal: 10,
       shadowColor: currentColors.black,
       shadowOffset: { width: 0, height: 3 },
       shadowOpacity: 0.2,
       shadowRadius: 5,
       elevation: 6,
-      alignItems: 'center', 
-      position: 'relative', 
-      width: '100%', 
+      alignItems: 'center',
+      position: 'relative',
+      width: '100%',
     },
     quoteIconLeft: {
       position: 'absolute',
-      top: 15, 
-      left: 15, 
+      top: 15,
+      left: 15,
       color: currentColors.tint,
-      opacity: 0.4, 
+      opacity: 0.4,
     },
     quoteIconRight: {
       position: 'absolute',
-      bottom: 15, 
-      right: 15,  
+      bottom: 15,
+      right: 15,
       color: currentColors.tint,
-      opacity: 0.4, 
+      opacity: 0.4,
     },
-    quoteText: { 
+    quoteText: {
       fontSize: 20, // Reduced from 22
       fontStyle: 'italic',
       textAlign: 'center',
       marginBottom: 15,
       color: currentColors.text,
       lineHeight: 28, // Adjusted from 30
-      paddingHorizontal: 30, // Reduced from 40
+      paddingHorizontal: 30, // Adjusted from 40
     },
-    authorText: { 
+    authorText: {
       fontSize: 16, // Reduced from 18
       fontWeight: '600',
       textAlign: 'center',
-      color: currentColors.tint,
-      paddingHorizontal: 30, // Reduced from 40
+      color: currentColors.tint, // Changed from currentColors.tint
+      paddingHorizontal: 30, // Adjusted from 40
     },
-    refreshButton: { 
+    refreshButton: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop: 20, 
+      marginTop: 20,
       paddingVertical: 8,
       paddingHorizontal: 15,
       borderRadius: 20,
-      backgroundColor: currentColors.tint + '20', 
+      backgroundColor: currentColors.tint + '20',
     },
-    refreshIcon: { 
+    refreshIcon: {
       marginRight: 8,
     },
-    refreshButtonText: { 
+    refreshButtonText: {
       fontSize: 16,
       color: currentColors.tint,
       fontWeight: '600',
     },
   });
 };
+
