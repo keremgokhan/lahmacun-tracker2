@@ -6,7 +6,7 @@ import { useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
-import { FontAwesome5 } from '@expo/vector-icons'; // Added FontAwesome5 import
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const QUOTE_STORAGE_KEY = 'dailyQuote';
 const QUOTE_DATE_STORAGE_KEY = 'dailyQuoteDate';
@@ -16,7 +16,7 @@ const QUOTES_LIST = [
   { text: "The unexamined life is not worth living.", author: "Socrates" },
   { text: "You have power over your mind – not outside events. Realize this, and you will find strength.", author: "Marcus Aurelius (Meditations)" },
   { text: "The journey of a thousand miles begins with a single step.", author: "Lao Tzu (Tao Te Ching)" },
-  { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Will Durant (summarizing Aristotle's Ethics)" },
+  { text: "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", author: "Will Durant (summarizing Aristotle\'s Ethics)" },
   { text: "The mind is everything. What you think you become.", author: "The Dhammapada (Sayings of the Buddha)" },
   { text: "So verily, with the hardship, there is relief. Verily, with the hardship, there is relief.", author: "The Holy Quran (94:5-6)" },
   { text: "This, too, shall pass.", author: "Persian Adage" },
@@ -43,19 +43,20 @@ export default function QuotesScreen() {
   const styles = getStyles(colorScheme);
   const [isLoading, setIsLoading] = useState(true);
   const [dailyQuote, setDailyQuote] = useState<Quote | null>(null);
+  const currentColors = Colors[colorScheme];
 
   const getTodaysDateString = () => {
     return new Date().toISOString().split('T')[0]; // Gets 'YYYY-MM-DD'
   };
 
-  const loadOrRefreshQuote = useCallback(async () => {
+  const loadOrRefreshQuote = useCallback(async (forceRefresh = false) => {
     setIsLoading(true);
     try {
       const storedQuoteStr = await AsyncStorage.getItem(QUOTE_STORAGE_KEY);
       const storedDate = await AsyncStorage.getItem(QUOTE_DATE_STORAGE_KEY);
       const currentDate = getTodaysDateString();
 
-      if (storedQuoteStr && storedDate === currentDate) {
+      if (!forceRefresh && storedQuoteStr && storedDate === currentDate) {
         setDailyQuote(JSON.parse(storedQuoteStr));
       } else {
         const randomIndex = Math.floor(Math.random() * QUOTES_LIST.length);
@@ -66,7 +67,7 @@ export default function QuotesScreen() {
       }
     } catch (error) {
       console.error("Failed to load or refresh quote:", error);
-      // Fallback to a random quote if storage fails
+      // Fallback to a random quote from the list if storage fails
       const randomIndex = Math.floor(Math.random() * QUOTES_LIST.length);
       setDailyQuote(QUOTES_LIST[randomIndex]);
     } finally {
@@ -74,26 +75,8 @@ export default function QuotesScreen() {
     }
   }, []);
 
-  const showNewRandomQuote = async () => {
-    if (QUOTES_LIST.length > 0) {
-      const randomIndex = Math.floor(Math.random() * QUOTES_LIST.length);
-      const newQuote = QUOTES_LIST[randomIndex];
-      setDailyQuote(newQuote); // Update displayed quote
-
-      // Also update AsyncStorage so it persists for the day
-      try {
-        const currentDateString = getTodaysDateString(); // Use existing helper
-        await AsyncStorage.setItem(QUOTE_STORAGE_KEY, JSON.stringify(newQuote));
-        await AsyncStorage.setItem(QUOTE_DATE_STORAGE_KEY, currentDateString);
-      } catch (error) {
-        console.error('Failed to save new random quote', error);
-        // Optionally, inform the user if saving fails
-      }
-    }
-  };
-
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       loadOrRefreshQuote();
     }, [loadOrRefreshQuote])
   );
@@ -102,7 +85,8 @@ export default function QuotesScreen() {
     return (
       <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
         <ThemedView style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={Colors[colorScheme].tint} />
+          <ActivityIndicator size="large" color={currentColors.accentMedium} />
+          <ThemedText style={{ marginTop: 10, color: currentColors.textNeutral }}>Loading wisdom...</ThemedText>
         </ThemedView>
       </ImageBackground>
     );
@@ -112,7 +96,11 @@ export default function QuotesScreen() {
     return (
       <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
         <ThemedView style={styles.centerContainer}>
-          <ThemedText style={styles.quoteText}>Could not load a quote.</ThemedText>
+          <ThemedText style={{color: currentColors.textNeutral, textAlign: 'center'}}>Could not load a quote. Please try again later.</ThemedText>
+          <TouchableOpacity style={styles.refreshButton} onPress={() => loadOrRefreshQuote(true)}>
+            <FontAwesome5 name="sync-alt" size={14} color={currentColors.buttonText} style={{ marginRight: 8 }} />
+            <ThemedText style={styles.refreshButtonText}>Try Again</ThemedText>
+          </TouchableOpacity>
         </ThemedView>
       </ImageBackground>
     );
@@ -122,13 +110,17 @@ export default function QuotesScreen() {
     <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
       <ThemedView style={styles.container}>
         <View style={styles.quoteCard}>
+          <FontAwesome5 name="quote-left" size={24} color={currentColors.accentSoft} style={styles.quoteIconLeft} />
           <ThemedText style={styles.quoteText}>"{dailyQuote.text}"</ThemedText>
-          <ThemedText style={styles.authorText}>- {dailyQuote.author}</ThemedText>
-          <TouchableOpacity onPress={showNewRandomQuote} style={styles.refreshButton}>
-            <FontAwesome5 name="sync-alt" size={18} color={Colors[colorScheme].tint} style={styles.refreshIcon} />
-            <ThemedText style={styles.refreshButtonText}>Show Another</ThemedText>
-          </TouchableOpacity>
+          <FontAwesome5 name="quote-right" size={24} color={currentColors.accentSoft} style={styles.quoteIconRight} />
+          {dailyQuote.author && (
+            <ThemedText style={styles.authorText}>- {dailyQuote.author}</ThemedText>
+          )}
         </View>
+        <TouchableOpacity style={styles.refreshButton} onPress={() => loadOrRefreshQuote(true)}>
+          <FontAwesome5 name="random" size={14} color={currentColors.buttonText} style={{ marginRight: 8 }} />
+          <ThemedText style={styles.refreshButtonText}>Show Another</ThemedText>
+        </TouchableOpacity>
       </ThemedView>
     </ImageBackground>
   );
@@ -146,11 +138,11 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
+      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
       paddingHorizontal: 20,
       backgroundColor: 'transparent',
-      paddingTop: 15,
     },
-    centerContainer: {
+    centerContainer: { // For loading and error states
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
@@ -158,47 +150,65 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       backgroundColor: 'transparent',
     },
     quoteCard: {
-      backgroundColor: currentColors.cardBackground,
-      borderRadius: 15,
-      padding: 25,
-      marginHorizontal: 10,
-      shadowColor: currentColors.black, // Changed from #000000
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.2,
-      shadowRadius: 5,
-      elevation: 6,
+      backgroundColor: currentColors.cardBackground, // Beige/Ivory
+      borderRadius: 12,
+      padding: 20, // Adjusted padding
+      width: '100%',
       alignItems: 'center',
+      shadowColor: currentColors.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 3,
+      elevation: 3,
+      marginBottom: 30, // Space before the button
+    },
+    quoteIconLeft: {
+      position: 'absolute',
+      top: 15,
+      left: 15,
+      opacity: 0.5,
+    },
+    quoteIconRight: {
+      position: 'absolute',
+      bottom: 15,
+      right: 15,
+      opacity: 0.5,
     },
     quoteText: {
-      fontSize: 22,
-      fontStyle: 'italic',
+      fontSize: 18, // Adjusted size
+      color: currentColors.textNeutral, // Dark neutral
       textAlign: 'center',
-      marginBottom: 15,
-      color: currentColors.text,
-      lineHeight: 30,
+      fontStyle: 'italic',
+      lineHeight: 26, // Increased line height
+      marginBottom: 15, // Space before author
+      paddingHorizontal: 15, // Ensure text doesn't touch quote icons
     },
     authorText: {
-      fontSize: 18,
-      fontWeight: '600',
-      textAlign: 'center',
-      color: currentColors.tint,
+      fontSize: 16, // Adjusted size
+      color: currentColors.textAccent, // Green accent
+      textAlign: 'right',
+      width: '100%',
+      paddingRight: 10, // Align with quote text padding
+      marginTop: 5,
     },
     refreshButton: {
+      backgroundColor: currentColors.accentMedium, // Medium green
+      paddingVertical: 12,
+      paddingHorizontal: 25,
+      borderRadius: 25, // More rounded for "pill" shape
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop: 20,
-      paddingVertical: 8,
-      paddingHorizontal: 15,
-      borderRadius: 20,
-      backgroundColor: currentColors.tint + '20', // Subtle background for the button
-    },
-    refreshIcon: {
-      marginRight: 8,
+      shadowColor: currentColors.black,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.15,
+      shadowRadius: 2,
+      elevation: 2,
+      marginTop: 20, // Ensure it's not off-screen on loading/error
     },
     refreshButtonText: {
-      fontSize: 16,
-      color: currentColors.tint,
+      color: currentColors.buttonText, // White text
+      fontSize: 15, // Adjusted size
       fontWeight: '600',
     },
   });

@@ -17,7 +17,7 @@ import { Link, useFocusEffect, router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Tracker } from '@/types/types';
-import { TrackerCard } from '@/components/TrackerCard'; // Updated to use TrackerCard
+import { TrackerCard } from '@/components/TrackerCard';
 
 const TRACKERS_STORAGE_KEY = 'trackersList';
 const QUOTES_STORAGE_KEY = 'quotesList';
@@ -34,7 +34,7 @@ export default function HomeScreen() {
   const colorScheme = useColorScheme() ?? 'light';
   const [trackers, setTrackers] = useState<Tracker[]>([]);
   const [quote, setQuote] = useState<Quote | null>(null);
-  const [_, setForceUpdate] = useState(0); // Kept for FlatList re-render on time change
+  const [_, setForceUpdate] = useState(0);
 
   const loadTrackers = async () => {
     try {
@@ -73,8 +73,8 @@ export default function HomeScreen() {
   useEffect(() => {
     loadQuote();
     const intervalId = setInterval(() => {
-      setForceUpdate(prev => prev + 1); // This ensures the timeSince updates are rendered
-    }, 1000); // Update every second
+      setForceUpdate(prev => prev + 1);
+    }, 1000);
     return () => clearInterval(intervalId);
   }, []);
 
@@ -132,6 +132,7 @@ export default function HomeScreen() {
   };
 
   const styles = getStyles(colorScheme);
+  const currentColors = Colors[colorScheme]; // For direct use of colors not in styles
 
   const renderTrackerItem = ({ item }: { item: Tracker }) => (
     <TrackerCard
@@ -166,14 +167,14 @@ export default function HomeScreen() {
             renderItem={renderTrackerItem}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContentContainer}
-            extraData={_} // Ensures re-render when forceUpdate changes
+            extraData={_}
           />
         )}
 
         <ThemedView style={styles.addButtonContainer}>
           <Link href="/add-tracker" asChild>
             <TouchableOpacity style={styles.addButton}>
-              <FontAwesome5 name="plus" size={18} color={Colors[colorScheme].primaryButtonText} style={{ marginRight: 8 }} />
+              <FontAwesome5 name="plus" size={16} color={currentColors.buttonText} style={{ marginRight: 8 }} />
               <ThemedText style={styles.addButtonText}>Add New Tracker</ThemedText>
             </TouchableOpacity>
           </Link>
@@ -196,13 +197,13 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
       backgroundColor: 'transparent'
     },
-    // titleContainer and title styles were removed as they are no longer used here
     quoteContainer: {
-      paddingHorizontal: 25,
-      paddingVertical: 15,
+      paddingHorizontal: 20, // Adjusted padding
+      paddingVertical: 15,   // Adjusted padding
       marginHorizontal: 20,
+      marginTop: 15, // Added some top margin
       marginBottom: 20,
-      backgroundColor: currentColors.cardBackground + 'cc', // 'cc' for some transparency
+      backgroundColor: currentColors.cardBackground, // Beige/Ivory
       borderRadius: 10,
       shadowColor: currentColors.black,
       shadowOffset: { width: 0, height: 1 },
@@ -214,18 +215,18 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       fontSize: 15,
       fontStyle: 'italic',
       textAlign: 'center',
-      color: currentColors.text,
+      color: currentColors.textNeutral, // Dark neutral
       marginBottom: 5,
     },
     quoteAuthor: {
       fontSize: 14,
       textAlign: 'right',
-      color: currentColors.text,
+      color: currentColors.textAccent, // Green accent
     },
     listContentContainer: {
-      paddingHorizontal: 16, // MODIFIED from 15
-      paddingTop: 15, // paddingTop can remain if it looks good
-      paddingBottom: Platform.OS === 'ios' ? 100 : 90, // Kept as is, specific to this screen's FAB
+      paddingHorizontal: 16,
+      paddingTop: 15,
+      paddingBottom: Platform.OS === 'ios' ? 100 : 90,
     },
     emptyContainer: {
       flex: 1,
@@ -237,7 +238,7 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     emptyText: {
       fontSize: 17,
       textAlign: 'center',
-      color: currentColors.text,
+      color: currentColors.textNeutral, // Changed to textNeutral for readability
       lineHeight: 24,
     },
     addButtonContainer: {
@@ -247,12 +248,12 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       right: 0,
       paddingVertical: Platform.OS === 'ios' ? 20 : 15,
       paddingHorizontal: 20,
-      backgroundColor: 'transparent', // Or a very subtle color if needed over complex backgrounds
-      borderTopWidth: Platform.OS === 'android' ? 1 : 0, // Conditional border
-      borderTopColor: Platform.OS === 'android' ? currentColors.separator + '40' : 'transparent', // translucent separator
+      backgroundColor: 'transparent',
+      borderTopWidth: Platform.OS === 'android' ? 1 : 0,
+      borderTopColor: Platform.OS === 'android' ? currentColors.separator + '40' : 'transparent',
     },
     addButton: {
-      backgroundColor: currentColors.tint,
+      backgroundColor: currentColors.accentMedium, // Medium green
       paddingVertical: 14,
       borderRadius: 10,
       flexDirection: 'row',
@@ -260,14 +261,15 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
       justifyContent: 'center',
       shadowColor: currentColors.black,
       shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2, // Kept as is for FAB prominence
-      shadowRadius: 3,   // Kept as is
-      elevation: 3,      // Kept as is
+      shadowOpacity: 0.2,
+      shadowRadius: 3,
+      elevation: 3,
     },
     addButtonText: {
-      color: currentColors.primaryButtonText,
-      fontSize: 17,    // Kept as is (subjective choice)
-      fontWeight: '600', // Kept as is
+      color: currentColors.buttonText, // White text
+      fontSize: 16, // Changed from 17
+      fontWeight: '600',
     },
   });
 };
+

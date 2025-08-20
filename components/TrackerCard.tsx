@@ -20,7 +20,7 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     card: {
       backgroundColor: currentColors.cardBackground,
       borderRadius: 12,
-      padding: 16,
+      padding: 16, // Reverted from 18
       marginBottom: 16,
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -34,52 +34,52 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     trackerDetails: {
       flex: 1,
       backgroundColor: 'transparent',
-      marginRight: 8,
+      marginRight: 8, // Reverted from 10
     },
     trackerName: {
       fontSize: 18,
       fontWeight: 'bold',
-      color: currentColors.text,
-      marginBottom: 5,
+      color: currentColors.textNeutral,
+      marginBottom: 5, // Reverted from 6
     },
     trackerType: {
-      fontSize: 13,
-      color: currentColors.tint,
-      marginBottom: 8,
+      fontSize: 14,
+      color: currentColors.textSecondary,
+      marginBottom: 8, // Reverted from 10
       fontWeight: '600',
     },
     timeBadgesContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      marginBottom: 3,
+      marginBottom: 6, // Changed from 8 to 6
       marginTop: 2,
     },
     timeBadge: {
-      backgroundColor: currentColors.tint,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
+      backgroundColor: currentColors.accentSoft,
+      paddingHorizontal: 8, // Reverted from 10
+      paddingVertical: 4,   // Reverted from 5
       borderRadius: 6,
-      marginRight: 5,
-      marginBottom: 5,
+      marginRight: 6,
+      marginBottom: 6,
     },
     timeBadgeText: {
-      color: currentColors.primaryButtonText,
-      fontSize: 14,
+      color: currentColors.textAccent,
+      fontSize: 13,
       fontWeight: '600',
     },
     trackerStartDate: {
-      fontSize: 13,
-      color: currentColors.gray,
-      marginBottom: 4,
+      fontSize: 14,
+      color: currentColors.textSecondary,
+      marginBottom: 4, // Reverted from 6
     },
     progressContainer: {
-      marginTop: 4,
+      marginTop: 4,  // Reverted from 6
       marginBottom: 5,
     },
     progressLabel: {
       fontSize: 12,
-      color: currentColors.gray,
-      marginBottom: 3,
+      color: currentColors.textSecondary,
+      marginBottom: 3, // Reverted from 4
     },
     progressBarTrack: {
       height: 8,
@@ -89,14 +89,15 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     },
     progressBarFill: {
       height: '100%',
-      backgroundColor: currentColors.tint,
+      backgroundColor: currentColors.accentMedium,
       borderRadius: 4,
     },
     actionsContainer: {
       flexDirection: 'column',
-      justifyContent: 'space-between',
+      justifyContent: 'space-between', // Reverted from space-around
       alignItems: 'center',
       backgroundColor: 'transparent',
+      // Removed height: '100%' and paddingVertical: 5
     },
     actionButton: {
       padding: 8,
@@ -124,6 +125,7 @@ export const TrackerCard: React.FC<TrackerCardProps> = ({
   };
 
   const dailyProgress = calculateDailyProgress();
+  const currentColors = Colors[colorScheme];
 
   return (
     <View style={styles.card}>
@@ -152,12 +154,13 @@ export const TrackerCard: React.FC<TrackerCardProps> = ({
       </TouchableOpacity>
       <View style={styles.actionsContainer}>
         <TouchableOpacity onPress={() => onResetTracker(item.id)} style={styles.actionButton}>
-          <FontAwesome5 name="sync-alt" size={18} color={Colors[colorScheme].text} />
+          <FontAwesome5 name="sync-alt" size={18} color={currentColors.accentSoft} />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => onDeleteTracker(item.id)} style={styles.actionButton}>
-          <FontAwesome5 name="trash-alt" size={18} color={Colors[colorScheme].text} />
+          <FontAwesome5 name="trash-alt" size={18} color={currentColors.accentSoft} />
         </TouchableOpacity>
       </View>
     </View>
   );
 };
+

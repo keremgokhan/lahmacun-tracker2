@@ -12,7 +12,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Tracker } from '@/types/types';
+import { Tracker } from '@/types/types'; // Assuming MilestoneCard uses DisplayMilestone, ensure Tracker is what's stored/retrieved
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { MilestoneCard } from '@/components/MilestoneCard';
@@ -49,6 +49,7 @@ export default function MilestonesScreen() {
   const styles = getStyles(colorScheme);
   const [isLoading, setIsLoading] = useState(true);
   const [displayMilestones, setDisplayMilestones] = useState<DisplayMilestone[]>([]);
+  const currentColors = Colors[colorScheme]; // For direct color access
 
   const calculateMilestones = async () => {
     setIsLoading(true);
@@ -73,8 +74,8 @@ export default function MilestonesScreen() {
             trackerType: tracker.type as ('addiction' | 'habit'),
             milestoneLabel: "Just for Today",
             celebratoryMessage: `Just for Today: ${tracker.name} - You're Doing Great!`,
-            achievedDate: new Date(startDateMs + DAY_MS),
-            displayDate: now,
+            achievedDate: new Date(startDateMs + DAY_MS), // Should be start + DAY_MS to be the "achieved" date
+            displayDate: now, // Display date is now, as it's for "today"
             isJustForToday: true,
           });
         }
@@ -96,7 +97,7 @@ export default function MilestonesScreen() {
         });
 
         const yearsActive = durationActiveMs / (365 * DAY_MS);
-        for (let year = 2; year <= yearsActive; year++) {
+        for (let year = 2; year <= Math.floor(yearsActive); year++) { // Use Math.floor for whole years
           allAchievedMilestones.push({
             id: `${tracker.id}_${year}Years`,
             trackerId: tracker.id,
@@ -135,8 +136,8 @@ export default function MilestonesScreen() {
     return (
       <ImageBackground source={backgroundImage} style={styles.backgroundImage} resizeMode="cover">
         <ThemedView style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={Colors[colorScheme].tint}/>
-          <ThemedText style={{marginTop: 10, color: Colors[colorScheme].text}}>Loading milestones...</ThemedText>
+          <ActivityIndicator size="large" color={currentColors.accentMedium} />
+          <ThemedText style={{marginTop: 10, color: currentColors.textNeutral}}>Loading milestones...</ThemedText>
         </ThemedView>
       </ImageBackground>
     );
@@ -154,8 +155,9 @@ export default function MilestonesScreen() {
           <FlatList
             data={displayMilestones}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <MilestoneCard milestone={item} />}
+            renderItem={({ item }) => <MilestoneCard milestone={item} />} // Pass colorScheme if MilestoneCard needs it directly, though it uses useColorScheme
             contentContainerStyle={styles.listContentContainer}
+            ListFooterComponent={<View style={{height:30}}/>} // Consistent bottom spacing
           />
         )}
       </ThemedView>
@@ -174,37 +176,41 @@ const getStyles = (colorScheme: 'light' | 'dark') => {
     container: {
       flex: 1,
       backgroundColor: 'transparent',
+      paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
     },
-    centerContainer: {
+    centerContainer: { // For loading state
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 20,
       backgroundColor: 'transparent',
     },
-    title: {
-      textAlign: 'center',
-      marginBottom: 20,
-      color: currentColors.text,
-      backgroundColor: 'transparent',
-    },
+    // title: { // Style for a potential screen title if added back
+    //   fontSize: 20, // As per brief
+    //   fontWeight: 'bold',
+    //   textAlign: 'center',
+    //   marginVertical: 20, // Adjusted margin
+    //   color: currentColors.textNeutral,
+    //   backgroundColor: 'transparent',
+    // },
     listContentContainer: {
       paddingTop: 15,
-      paddingHorizontal: 16,
-      paddingBottom: 80,
+      paddingHorizontal: 16, // Consistent horizontal padding
+      // paddingBottom handled by ListFooterComponent
     },
     emptyTextContainer: {
         flex:1,
         justifyContent:'center',
         alignItems:'center',
-        backgroundColor:'transparent'
+        backgroundColor:'transparent',
+        paddingHorizontal: 20, // Add padding to empty text container
     },
     emptyText: {
       fontSize: 16,
       textAlign: 'center',
-      color: currentColors.text,
-      marginTop: 10,
-      paddingHorizontal: 20,
+      color: currentColors.textNeutral, // Changed to textNeutral
+      lineHeight: 23, // Adjusted line height
     },
   });
 };
+
