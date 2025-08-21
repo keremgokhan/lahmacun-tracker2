@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "lahmacun-tracker2",
+    "name": "Lahmacun Tracker",
     "slug": "lahmacun-tracker2",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "lahmacuntracker2",
